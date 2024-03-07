@@ -6,26 +6,27 @@ Pascal triangle
 
 
 def pascal_triangle(n):
-  """
-  Returns a list of lists representing the Pascal's triangle of n rows.
+    """
+    Returns a list of lists of integers representing
+    the Pascal’s triangle of n
 
-  Args:
-      n: The number of rows in the Pascal's triangle.
+    """
+    pascal_triangle = [[1]]
 
-  Returns:
-      A list of lists representing the Pascal's triangle.
-  """
+    if int(n) <= 0:
+        return list()
 
-  if n <= 0:
-    return []
-
-  triangle = [[1]]
-  for i in range(1, n):
-    row = [1]
-    for j in range(1, i):
-      row.append(triangle[i-1][j-1] + triangle[i-1][j])
-    row.append(1)
-    triangle.append(row)
-
-  return triangle
-
+    for i in range(n - 1):
+        if len(pascal_triangle[-1]) > 1:
+            last_item = pascal_triangle[-1]
+            triangle = [1]
+            for index, j in enumerate(last_item):
+                if index != (len(last_item) - 1):
+                    triangle.append(j + last_item[index + 1])
+                else:
+                    break
+            triangle.append(1)
+            pascal_triangle.append(triangle)
+        else:
+            pascal_triangle.append([1, 1])
+    return pascal_triangle
