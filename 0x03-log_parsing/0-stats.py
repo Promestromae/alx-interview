@@ -1,60 +1,37 @@
 #!/usr/bin/python3
-'''
-Module Docs
-'''
-from sys import stdin
+'''A script that reads stdin line by line and computes metrics'''
 
 
-def print_summary(total_file_size, status_counts):
-    """
-    Print the total file size and counts of HTTP status codes.
+import sys
 
-    :param total_file_size: Total file size accumulated so far.
-    :param status_counts: Dictionary containing counts of different HTTP status
-    codes.
-    """
-    print("File size: {:d}".format(total_file_size))
-    for code, count in sorted(status_counts.items()):
-        if count != 0:
-            print("{}: {}".format(code, count))
-
-
-# Dictionary to store counts of different HTTP status codes
-http_status_counts = {'200': 0, '301': 0, '400': 0, '401': 0,
-                      '403': 0, '404': 0, '405': 0, '500': 0}
-
-# Initialize variables
-total_file_size = 0
-line_count = 0
-
+cache = {'200': 0, '301': 0, '400': 0, '401': 0,
+         '403': 0, '404': 0, '405': 0, '500': 0}
+total_size = 0
+counter = 0
 
 try:
-    # Iterate over lines from standard input
-    for line in stdin:
-        # Split the line into words
-        line_args = line.split()
+    for line in sys.stdin:
+        line_list = line.split(" ")
+        if len(line_list) > 4:
+            code = line_list[-2]
+            size = int(line_list[-1])
+            if code in cache.keys():
+                cache[code] += 1
+            total_size += size
+            counter += 1
 
-        if len(line_args) > 2:
-            # Extract HTTP status code and file size
-            status_code = line_args[-2]
-            file_size = int(line_args[-1])
+        if counter == 10:
+            counter = 0
+            print('File size: {}'.format(total_size))
+            for key, value in sorted(cache.items()):
+                if value != 0:
+                    print('{}: {}'.format(key, value))
 
-            # Update counts in the dictionary
-            if status_code in http_status_counts:
-                http_status_counts[status_code] += 1
-
-            # Update total file size and line count
-            total_file_size += file_size
-            line_count += 1
-
-            # Print summary every 10 lines
-            if line_count == 10:
-                print_summary(total_file_size, http_status_counts)
-                line_count = 0
-
-except KeyboardInterrupt:
+except Exception as err:
     pass
 
 finally:
-    # Print final summary
-    print_summary(total_file_size, http_status_counts)
+    print('File size: {}'.format(total_size))
+    for key, value in sorted(cache.items()):
+        if value != 0:
+            print('{}: {}'.format(key, value))
