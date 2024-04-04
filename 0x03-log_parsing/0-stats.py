@@ -1,4 +1,4 @@
-cript that reads stdin line by line and computes metrics'''
+# A script that reads stdin line by line and computes metrics'''
 
 
 import sys
